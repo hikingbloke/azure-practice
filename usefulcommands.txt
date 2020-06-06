@@ -1,0 +1,39 @@
+Powerhsell command to create service principal
+--------------------------------------------------
+az ad sp create-for-rbac -n secretapp --skip-assignment
+
+Define the following environment variables first
+--------------------------------------------------------
+AZURE_CLIENT_ID="777b169f-b2f0-4a03-beff-4b421733470f"
+AZURE_CLIENT_SECRET="7~Xth~1xvF~-77Jy80_tqGSLhB5R2m1poD"
+AZURE_TENANT_ID="d51c2a72-b0c2-421b-bf85-cf52bdb3eaba"
+
+Set policy and connect key vault with service principal with secrets
+------------------------------------------------------------------------
+az keyvault set-policy --name securedatakeyvault01 --spn "777b169f-b2f0-4a03-beff-4b421733470f" --secret-permissions backup delete get list set
+
+Few More commands
+List all the secrets in keyvault
+--------------------------------------------------------
+az keyvault secret list --vault-name securedatakeyvault01
+
+Show secret of an item 
+--------------------------------------------------------
+az keyvault secret show --vault-name securedatakeyvault01 --id "https://securedatakeyvault01.vault.azure.net/secrets/dbpassword"
+
+Enable a secret
+--------------------------------------------------------
+az keyvault secret set-attributes --name dbpassword2 --vault-name securedatakeyvault01 --version "56d740bb65794a7baeef75652812c4b7" --enabled true
+
+Set policy and connect key vault with service principal with keys
+-----------------------------------------------------------------
+az keyvault set-policy --name securedatakeyvault01 --spn "777b169f-b2f0-4a03-beff-4b421733470f" --key-permissions backup delete get list create encrypt decrypt update
+
+
+Encrypt hard disk for Virrtual machine
+-----------------------------------------------------------------
+az vm encryption enable -g infrastructure --name demovm --disk-encryption-keyvault securedatakeyvault01 
+
+-g is resource group and --name is name of thh VM
+
+
